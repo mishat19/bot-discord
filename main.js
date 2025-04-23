@@ -37,4 +37,6 @@ for (const file of eventFiles) {
     }
 }
 
+client.cooldowns = new Collection(); //Key = commande, Value = dernière utilisation par utilisateur
+
 client.login(token);
