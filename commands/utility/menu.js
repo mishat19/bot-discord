@@ -1,6 +1,7 @@
 const { ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
+    category: 'utility',
     data: new SlashCommandBuilder()
         .setName('menu')
         .setDescription('Select a Pokemon.'),
@@ -21,7 +22,7 @@ module.exports = {
                     .setLabel('Option')
                     .setValue('optionVal')
                     .setDescription('A selectable option')
-                    .setEmoji('123456789012345678')
+                    .setEmoji('😊')
                     .setDefault(true),
             );
 

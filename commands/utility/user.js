@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const wait = require('node:timers/promises').setTimeout;
 
 module.exports = {
+    category: 'utility',
     data: new SlashCommandBuilder()
         .setName('user')
         .setDescription('Provides information about the user.'),
