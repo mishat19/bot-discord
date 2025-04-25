@@ -24,7 +24,7 @@ for (const folder of commandFolders) {
     }
 }
 
-//Interaction avec API Discord
+//Interaction avec API
 const rest = new REST().setToken(token);
 
 //Déployer commandes
