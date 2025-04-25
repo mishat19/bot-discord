@@ -1,6 +1,7 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionContextType, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
+    category: 'utility',
     data: new SlashCommandBuilder()
         .setName('ban')
         .setDescription('Select a member and ban them.')
@@ -27,13 +28,13 @@ module.exports = {
         const cancel = new ButtonBuilder()
             .setCustomId('cancel')
             .setLabel('Cancel')
-            .setEmoji('123456789012345678')
+            .setEmoji('❌')
             .setStyle(ButtonStyle.Secondary);
 
         const row = new ActionRowBuilder()
             .addComponents(cancel, confirm);
 
-        const reponse = await interaction.reply({
+        const response = await interaction.reply({
             content: `Are you sure you want to ban ${target} for reason: ${reason}?`,
             components: [row],
             withResponse: true,
@@ -42,7 +43,7 @@ module.exports = {
         const collectorFilter = i => i.user.id === interaction.user.id;
 
         try {
-            const confirmation = await reponse.resource.message.awaitMessageComponent({ filter: collectorFilter, time: 60_000 });
+            const confirmation = await response.resource.message.awaitMessageComponent({ filter: collectorFilter, time: 60_000 });
 
             if (confirmation.customId === 'confirm') {
                 await interaction.guild.members.ban(target);
