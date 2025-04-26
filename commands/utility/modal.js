@@ -1,32 +1,37 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, SlashCommandBuilder } = require('discord.js');
 
+const createReportModal = () => {
+    const modal = new ModalBuilder()
+        .setCustomId('signalement')
+        .setTitle('Signalement');
+
+    const titre = new TextInputBuilder()
+        .setCustomId('titre')
+        .setLabel("Raison de votre signalement")
+        .setStyle(TextInputStyle.Short)
+        .setPlaceholder('Insultes, moqueries,...');
+
+    const probleme = new TextInputBuilder()
+        .setCustomId('probleme')
+        .setLabel("Détaillez votre problème")
+        .setStyle(TextInputStyle.Paragraph);
+
+    const firstActionRow = new ActionRowBuilder().addComponents(titre);
+    const secondActionRow = new ActionRowBuilder().addComponents(probleme);
+
+    modal.addComponents(firstActionRow, secondActionRow);
+
+    return modal;
+};
+
 module.exports = {
+    createReportModal,
     category: 'utility',
     data: new SlashCommandBuilder()
         .setName('modal')
-        .setDescription('Your hobbies!'),
+        .setDescription('Signaler un problème'),
     async execute(interaction) {
-        const modal = new ModalBuilder()
-            .setCustomId('myModal')
-            .setTitle('My Modal');
-
-        const favoriteColorInput = new TextInputBuilder()
-            .setCustomId('favoriteColorInput')
-            .setLabel("What's your favorite color?")
-            .setStyle(TextInputStyle.Short)
-            .setValue('Default')
-            .setPlaceholder('Enter some text!');
-
-        const hobbiesInput = new TextInputBuilder()
-            .setCustomId('hobbiesInput')
-            .setLabel("What's some of your favorite hobbies?")
-            .setStyle(TextInputStyle.Paragraph);
-
-        const firstActionRow = new ActionRowBuilder().addComponents(favoriteColorInput);
-        const secondActionRow = new ActionRowBuilder().addComponents(hobbiesInput);
-
-        modal.addComponents(firstActionRow, secondActionRow);
-
+        const modal = createReportModal();
         await interaction.showModal(modal);
     }
 };
