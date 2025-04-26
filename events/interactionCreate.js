@@ -1,15 +1,24 @@
-const { Events, Collection, MessageFlags } = require('discord.js');
+const { Events, Collection, MessageFlags, GatewayIntentBits} = require('discord.js');
 
 module.exports = {
     name: Events.InteractionCreate,
     async execute(interaction) {
         if(interaction.isModalSubmit()){
-            if (interaction.customId === 'myModal') {
-                const favoriteColor = interaction.fields.getTextInputValue('favoriteColorInput');
-                const hobbies = interaction.fields.getTextInputValue('hobbiesInput');
+            if (interaction.customId === 'signalement') {
+                const titre = interaction.fields.getTextInputValue('titre');
+                const probleme = interaction.fields.getTextInputValue('probleme');
+
+                const client = interaction.client;
+                const channel = client.channels.cache.get('1364328269079646218');
+
+                if (channel && channel.isTextBased()) {
+                    await channel.send(`User: <@${interaction.user.id}>\nMotif du problème : ${titre}\nExplications : ${probleme}`);
+                } else {
+                    console.error('Channel not found or not a text channel.');
+                }
 
                 await interaction.reply({
-                    content: `Your favorite color is ${favoriteColor} and your hobbies are ${hobbies}`,
+                    content: `Motif de votre problème : ${titre} et les explications apportées : ${probleme}`,
                     flags: MessageFlags.Ephemeral,
                 });
             }

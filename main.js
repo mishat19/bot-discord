@@ -1,6 +1,6 @@
 const fs = require('node:fs'); //Lire dossier commandes
 const path = require('node:path'); //Aide accéder fichiers/dossiers
-const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, Events, GatewayIntentBits, PresenceUpdateStatus } = require('discord.js');
 const { token } = require('./config.json');
 //const intents = new Discord.GatewayIntentBits(53608447);
 const client = new Client({ intents: [GatewayIntentBits.Guilds] }); //Guild référence à un serveur Discord

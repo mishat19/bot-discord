@@ -1,4 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, MessageFlags } = require('discord.js');
+const { createReportModal } = require('./modal.js');
 
 module.exports = {
     category: 'utility',
@@ -51,19 +52,20 @@ module.exports = {
         const match = new ButtonBuilder()
             .setCustomId('match')
             .setLabel('Match')
-            //.setEmoji('💗')
+            //.setEmoji('✨')
             .setStyle(ButtonStyle.Success)
 
         const echec = new ButtonBuilder()
             .setCustomId('echec')
             .setLabel('Échec')
-            //.setEmoji('💥')
+            //.setEmoji('💢')
+            .setEmoji('❌')
             .setStyle(ButtonStyle.Secondary)
 
         const signaler = new ButtonBuilder()
             .setCustomId('signaler')
             .setLabel('Signaler')
-            //.setEmoji('👁️‍🗨️')
+            //.setEmoji('🎟️️')
             .setStyle(ButtonStyle.Danger)
 
         const row = new ActionRowBuilder()
@@ -79,7 +81,7 @@ module.exports = {
             content: `<@${interaction.user.id}>\n Veux-tu vraiment envoyer une demande à ${target} ?\n Cette personne recevra ta demande en Message Privé afin de valider ou refuser ta demande, vérifie bien d'avoir bien expliqué le motif de ta demande !`,
             components: [row],
             //withResponse: true,
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
         });
 
         const envoiFilter = i => i.user.id === interaction.user.id;
@@ -112,12 +114,12 @@ module.exports = {
 
                 try {
                     await target.send({
-                        content: `<@${interaction.user.id}> souhaite créer un MATCH avec toi pour raison(s) : "${motif}".\n\n Tu peux accepter ou refuser sa demande, c'est comme tu le souhaites ! Mais sache que la vie est faites de surprise 😉`,
+                        content: `<@${interaction.user.id}> souhaite créer un MATCH avec toi avec pour motif(s) : "${motif}".\n\n Tu peux accepter ou refuser sa demande, c'est comme tu le souhaites ! Mais sache que la vie est faites de surprise 😉`,
                         components: [reponseTarget],
                     });
                 } catch (error) {
                     console.error(`Erreur lors de l'envoi du MP au receveur :`, error);
-                    await interaction.followUp({ content: 'Cet utilisateur ne peut pas recevoir de Messages Privé.', ephemeral: true });
+                    await interaction.followUp({ content: 'Cet utilisateur ne peut pas recevoir de Messages Privé.', flags: MessageFlags.Ephemeral });
                 }
             } else{
                 await interaction.editReply({ content: 'Annulation', components: []});
@@ -153,17 +155,37 @@ module.exports = {
                             type: 0
                     });
                     const messageMatch = await channelMatch.send({
-                        content: 'Bienvenue dans votre salon !',
+                        content: `Bienvenue dans votre salon privé où vous pourrez apprendre à vous connaître dans l'intimité totale ! ${utilisateurDemande} a aimé ton profil ${target}, il aimerait faire ta connaissance et il te remercie d'avoir accepté sa demande 😊`,
                         components: [matchEpingle],
                         fetchReply: true //Récupérer message
                     });
                     await messageMatch.pin();
 
+                    //Ecoute interactions
+                    const messageFilter = i => ['match', 'echec', 'signaler'].includes(i.customId);
+                    const messageCollector = messageMatch.createMessageComponentCollector({ filter: messageFilter });
+
+                    messageCollector.on('collect', async i => {
+                        if (i.customId === 'match') {
+                            const user = i.user.id === utilisateurDemande.id ? target : utilisateurDemande;
+                            await i.reply({ content: `🎉 Tu as confirmé le match avec ${user} ! 🎉 \n\n Je suis heureux que vos profils aient matché, n'hésite pas à lui rappeler de confirmer le match si cela est réciproque !` });
+                        } else if (i.customId === 'echec') {
+                            await i.reply({ content: 'Je suis désolé que le match n\'ait pas fonctionné, j\'espère que tu seras satisfait du prochain !' });
+                            setTimeout(() => {
+                                channelMatch.delete();
+                           }, 3000);
+                            // Ajouter ici la logique pour signaler un échec
+                        } else if (i.customId === 'signaler') {
+                            const reportModal = createReportModal();
+                            await i.showModal(reportModal);
+                        }
+                    });
+
                 } catch (error) {
                     console.error('Erreur lors de l\'envoi du message privé à l\'autre utilisateur :', error);
                     await interaction.followUp({
                         content: 'Erreur lors de l\'envoi du message privé à l\'autre utilisateur. Veuillez vérifier les paramètres de confidentialité de l\'utilisateur cible.',
-                        ephemeral: true
+                        flags: MessageFlags.Ephemeral
                     });
                 }
             } else if (i.customId === 'refuser') {
@@ -174,7 +196,7 @@ module.exports = {
                     console.error('Erreur lors de l\'envoi du message privé à l\'autre utilisateur :', error);
                     await interaction.followUp({
                         content: 'Erreur lors de l\'envoi du message privé à l\'autre utilisateur. Veuillez vérifier les paramètres de confidentialité de l\'utilisateur cible.',
-                        ephemeral: true
+                        flags: MessageFlags.Ephemeral
                     });
                 }
             }
