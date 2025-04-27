@@ -1,4 +1,5 @@
-const { Events, Collection, MessageFlags, GatewayIntentBits} = require('discord.js');
+const { Events, Collection, MessageFlags, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { createReportModal } = require('../commands/utility/modal');
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -13,6 +14,27 @@ module.exports = {
 
                 if (channel && channel.isTextBased()) {
                     await channel.send(`User: <@${interaction.user.id}>\nMotif du problème : ${titre}\nExplications : ${probleme}`);
+                    //Embed
+                    const exampleEmbed = new EmbedBuilder()
+                        .setColor(0xFF0000)
+                        .setTitle(`Signalement de ${interaction.user.username}`)
+                        //.setURL('https://discord.js.org/')
+                        //.setAuthor({ name: 'Some name', iconURL: 'https://i.imgur.com/AfFp7pu.png', url: 'https://discord.js.org' })
+                        .setAuthor({ name: interaction.client.user.username, iconURL: interaction.client.user.displayAvatarURL() })
+                        //.setDescription('Formulaire')
+                        //.setThumbnail('https://i.imgur.com/AfFp7pu.png')
+                        .addFields(
+                            { name: 'Signaleur :', value : `<@${interaction.user.id}>`},
+                            { name: 'Motif du signalement :', value: titre },
+                            { name: '\u200B', value: '\u200B' },
+                            { name: 'Détails :', value: probleme, inline: true },
+                        )
+                        //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+                        //.setImage('https://i.imgur.com/AfFp7pu.png')
+                        .setTimestamp()
+                        .setFooter({ text: `${interaction.user.username}`, iconURL: interaction.user.displayAvatarURL() });
+
+                    channel.send({ embeds: [exampleEmbed] });
                 } else {
                     console.error('Channel not found or not a text channel.');
                 }
