@@ -1,11 +1,18 @@
-const fs = require('node:fs'); //Lire dossier commandes
-const path = require('node:path'); //Aide accéder fichiers/dossiers
-const { Client, Collection, Events, GatewayIntentBits, PresenceUpdateStatus } = require('discord.js');
+const fs = require('node:fs');
+const path = require('node:path');
+const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
-//const intents = new Discord.GatewayIntentBits(53608447);
-const client = new Client({ intents: [GatewayIntentBits.Guilds] }); //Guild référence à un serveur Discord
 
-client.commands = new Collection(); //Class Collection extension de map
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.MessageContent
+    ]
+});
+
+client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
@@ -15,7 +22,6 @@ for (const folder of commandFolders) {
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
         const command = require(filePath);
-        // Set a new item in the Collection with the key as the command name and the value as the exported module
         if ('data' in command && 'execute' in command) {
             client.commands.set(command.data.name, command);
         } else {
@@ -37,14 +43,18 @@ for (const file of eventFiles) {
     }
 }
 
-client.cooldowns = new Collection(); //Key = commande, Value = dernière utilisation par utilisateur
+client.cooldowns = new Collection();
 
-//Ajout de réactions intérêts
+// Ajout de réactions intérêts
 client.on('messageReactionAdd', async (reaction, user) => {
-    if (reaction.emoji.name === '👍') {
-        if (!user.bot) {
-            require('./reactionHandler')(client, reaction, user);
+    try {
+        if (reaction.emoji.name === '👍') {
+            if (!user.bot) {
+                await require('./interets-test')(client, reaction, user);
+            }
         }
+    } catch (error) {
+        console.log(error);
     }
 });
 
