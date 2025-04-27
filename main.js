@@ -39,4 +39,13 @@ for (const file of eventFiles) {
 
 client.cooldowns = new Collection(); //Key = commande, Value = dernière utilisation par utilisateur
 
+//Ajout de réactions intérêts
+client.on('messageReactionAdd', async (reaction, user) => {
+    if (reaction.emoji.name === '👍') {
+        if (!user.bot) {
+            require('./reactionHandler')(client, reaction, user);
+        }
+    }
+});
+
 client.login(token);

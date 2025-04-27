@@ -1,5 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, MessageFlags } = require('discord.js');
-const { createReportModal } = require('./modal.js');
+const { createReportModal } = require('./signalement.js');
 
 module.exports = {
     category: 'utility',
@@ -164,11 +164,18 @@ module.exports = {
                     //Ecoute interactions
                     const messageFilter = i => ['match', 'echec', 'signaler'].includes(i.customId);
                     const messageCollector = messageMatch.createMessageComponentCollector({ filter: messageFilter });
+                    const roleMatch = interaction.guild.roles.cache.get('1366033894213685343');
 
                     messageCollector.on('collect', async i => {
                         if (i.customId === 'match') {
                             const user = i.user.id === utilisateurDemande.id ? target : utilisateurDemande;
                             await i.reply({ content: `🎉 Tu as confirmé le match avec ${user} ! 🎉 \n\n Je suis heureux que vos profils aient matché, n'hésite pas à lui rappeler de confirmer le match si cela est réciproque !` });
+                            try{
+                                await interaction.guild.members.cache.get(i.user.id).roles.add(roleMatch.role);
+                            } catch (error){
+                                console.error('Erreur d\'ajout du rôle :', error);
+                                await interaction.reply({ content: `Erreur lors de l'ajout du rôle <@${roleMatch}>, veuillez réessayer.`})
+                            }
                         } else if (i.customId === 'echec') {
                             await i.reply({ content: 'Je suis désolé que le match n\'ait pas fonctionné, j\'espère que tu seras satisfait du prochain !' });
                             setTimeout(() => {

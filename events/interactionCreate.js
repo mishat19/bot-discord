@@ -1,5 +1,5 @@
 const { Events, Collection, MessageFlags, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { createReportModal } = require('../commands/utility/modal');
+const { createReportModal } = require('../commands/utility/signalement');
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -85,11 +85,6 @@ module.exports = {
                     await interaction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
                 }
             }
-            //} else if (interaction.isButton()){
-
-            //} else if (interaction.isStringSelectMenu()){
-
-            //}
         }
     },
 };
