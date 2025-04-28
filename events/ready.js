@@ -17,7 +17,7 @@ module.exports = {
             guild.channels.cache.forEach(async channel => {
                 if (channel.isTextBased()) {
                     try {
-                        await channel.messages.fetch({ limit: 100 }); // Récupérer les 100 derniers messages
+                        await channel.messages.fetch({ limit: 30 }); // Récupérer les 30 derniers messages
                         //console.log(`Messages récupérés dans le salon ${channel.name} de la guilde ${guild.name}.`);
                     } catch (error) {
                         console.error(`Erreur lors de la récupération des messages dans le salon ${channel.name} de la guilde ${guild.name}:`, error);

@@ -46,14 +46,16 @@ for (const file of eventFiles) {
 
 client.cooldowns = new Collection();
 
+//--------------------- POSITIF INTERET ---------------------
+
 let removed = false;
-// Ajout de réactions intérêts
+
 client.on('messageReactionAdd', async (reaction, user) => {
     try {
-        if (reaction.emoji.name === '👍') {
+        if (reaction.emoji.name === '💌') {
             if (!user.bot) {
                 removed = false;
-                await require('./interets-test')(client, reaction, user, removed);
+                await require('./reactions/interet-positif')(client, reaction, user, removed);
             }
         }
     } catch (error) {
@@ -63,10 +65,38 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
 client.on('messageReactionRemove', async (reaction, user) => {
     try {
-        if (reaction.emoji.name === '👍') {
+        if (reaction.emoji.name === '💌') {
             if (!user.bot) {
                 removed = true;
-                await require('./interets-test')(client, reaction, user, removed);
+                await require('./reactions/interet-positif')(client, reaction, user, removed);
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+//--------------------- NEGATIF INTERET ---------------------
+
+client.on('messageReactionAdd', async (reaction, user) => {
+    try {
+        if (reaction.emoji.name === '💔') {
+            if (!user.bot) {
+                removed = false;
+                await require('./reactions/interet-negatif')(client, reaction, user, removed);
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+client.on('messageReactionRemove', async (reaction, user) => {
+    try {
+        if (reaction.emoji.name === '💔') {
+            if (!user.bot) {
+                removed = true;
+                await require('./reactions/interet-negatif')(client, reaction, user, removed);
             }
         }
     } catch (error) {

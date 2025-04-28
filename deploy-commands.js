@@ -35,6 +35,7 @@ const rest = new REST().setToken(token);
         //La méthode PUT pour rafraichir toutes commandes du serveur avec le SET courant
         const data = await rest.put(
             Routes.applicationGuildCommands(clientId, guildId),
+            //Routes.applicationCommands(clientId),
             { body: commands },
         );
 
