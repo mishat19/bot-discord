@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
 const { token } = require('./config.json');
 
 const client = new Client({
@@ -9,7 +9,8 @@ const client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.MessageContent
-    ]
+    ],
+    partials: [Partials.Message, Partials.Channel, Partials.Reaction]
 });
 
 client.commands = new Collection();
@@ -45,12 +46,27 @@ for (const file of eventFiles) {
 
 client.cooldowns = new Collection();
 
+let removed = false;
 // Ajout de réactions intérêts
 client.on('messageReactionAdd', async (reaction, user) => {
     try {
         if (reaction.emoji.name === '👍') {
             if (!user.bot) {
-                await require('./interets-test')(client, reaction, user);
+                removed = false;
+                await require('./interets-test')(client, reaction, user, removed);
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+client.on('messageReactionRemove', async (reaction, user) => {
+    try {
+        if (reaction.emoji.name === '👍') {
+            if (!user.bot) {
+                removed = true;
+                await require('./interets-test')(client, reaction, user, removed);
             }
         }
     } catch (error) {

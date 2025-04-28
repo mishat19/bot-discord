@@ -1,14 +1,14 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const path = require('path');
 
-// Initialiser Sequelize
-const sequelize = new Sequelize('bot', 'root', 'root', {
-    host: 'localhost',
-    dialect: 'mysql',
+//Init Sequelize
+const sequelize = new Sequelize({
+    //host: 'localhost',
+    dialect: 'sqlite',
     storage: path.join(__dirname, 'data', 'database.db'),
 });
 
-// Définir un modèle pour la table 'interests'
+//Table INTEREST
 const Interest = sequelize.define('Interest', {
     id: {
         type: DataTypes.INTEGER,
@@ -41,16 +41,16 @@ const Interest = sequelize.define('Interest', {
     }
 }, {
     hooks: {
-        beforeCreate: (interest, options) => {
+        beforeCreate: (interest) => {
             interest.ptsInterets = interest.ptsPositifs - interest.ptsNegatifs;
         },
-        beforeUpdate: (interest, options) => {
+        beforeUpdate: (interest) => {
             interest.ptsInterets = interest.ptsPositifs - interest.ptsNegatifs;
         }
     }
 });
 
-// Fonction pour initialiser la base de données
+//Init base de données
 async function initializeDatabase() {
     try {
         await sequelize.authenticate();
@@ -61,7 +61,7 @@ async function initializeDatabase() {
     }
 }
 
-// Fonction pour ajouter ou mettre à jour les points d'intérêts
+//Ajouter/MAJ points POSITIFS d'intérêts
 async function addInterestPoints(envoyeur, receveur, points) {
     const [interest, created] = await Interest.findOrCreate({
         where: { envoyeur, receveur },
@@ -74,6 +74,7 @@ async function addInterestPoints(envoyeur, receveur, points) {
     }
 }
 
+//Supprimer/MAJ points NEGATIFS d'intérêts
 async function removeInterestPoints(envoyeur, receveur, points) {
     const [interest, created] = await Interest.findOrCreate({
         where: { envoyeur, receveur },
@@ -86,22 +87,26 @@ async function removeInterestPoints(envoyeur, receveur, points) {
     }
 }
 
-// Fonction pour récupérer les points d'intérêts entre deux utilisateurs
+//Points d'intérêt entre envoyeur/receveur
 async function getInterestPoints(envoyeur, receveur) {
     const interest = await Interest.findOne({
-        where: {
-            [Sequelize.Op.or]: [
-                { envoyeur, receveur },
-                { envoyeur: receveur, receveur: envoyeur }
-            ]
-        }
+        where: { envoyeur, receveur }
     });
     return interest ? interest.ptsInterets : 0;
+}
+
+//Détail points d'intérêt entre envoyeur/receveur
+async function getDetailInterestPoints(envoyeur, receveur) {
+    const interest = await Interest.findOne({
+        where: { envoyeur, receveur }
+    });
+    return [interest.ptsPositifs, interest.ptsNegatifs];
 }
 
 module.exports = {
     initializeDatabase,
     addInterestPoints,
     removeInterestPoints,
-    getInterestPoints
+    getInterestPoints,
+    getDetailInterestPoints,
 };
