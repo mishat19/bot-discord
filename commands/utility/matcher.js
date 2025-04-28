@@ -77,6 +77,13 @@ module.exports = {
         const matchEpingle = new ActionRowBuilder()
             .addComponents(match, echec, signaler)
 
+        const bots = interaction.guild.members.cache.filter(member => member.user.bot);
+        const usersInterdits = [...bots.map(bot => bot.id), interaction.user.id];
+        if (usersInterdits.includes(target.id)) {
+            await interaction.reply( {content : 'Désolé, tu ne peux pas créer un match avec toi-même, je suis désolé de te l\'apprendre...', flags: MessageFlags.Ephemeral});
+            return;
+        }
+
         const envoi = await interaction.reply({
             content: `<@${interaction.user.id}>\n Veux-tu vraiment envoyer une demande à ${target} ?\n Cette personne recevra ta demande en Message Privé afin de valider ou refuser ta demande, vérifie bien d'avoir bien expliqué le motif de ta demande !`,
             components: [row],
@@ -97,6 +104,7 @@ module.exports = {
                 //--------------------------------------------
                 //Vérification si channel déjà existant
                 const channelVerif = interaction.guild.channels.cache.find(ch => ch.name === channelName);
+
                 if(channelVerif){
                     await interaction.followUp({ content: 'Tu as déjà une demande de match acceptée.', flags: MessageFlags.Ephemeral});
                     await envoi.delete();
@@ -152,7 +160,25 @@ module.exports = {
                     const channelMatch = await interaction.guild.channels.create({
                             parent: '1365735697851355296',
                             name: `${channelName}`,
-                            type: 0
+                            type: 0,
+                            permissionOverwrites: [
+                                {
+                                    id: interaction.guild.id, // @everyone
+                                    deny: ['ViewChannel'],    // Interdit à tout le monde
+                                },
+                                {
+                                    id: utilisateurDemande.id,
+                                    allow: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'], // Autorise utilisateur demande
+                                },
+                                {
+                                    id: target.id,
+                                    allow: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'], // Autorise la cible
+                                },
+                                {
+                                    id: interaction.client.user.id,
+                                    allow: ['ViewChannel', 'SendMessages', 'ManageChannels', 'ManageMessages'], // Autorise ton bot à tout gérer
+                                }
+                            ]
                     });
                     const messageMatch = await channelMatch.send({
                         content: `Bienvenue dans votre salon privé où vous pourrez apprendre à vous connaître dans l'intimité totale ! ${utilisateurDemande} a aimé ton profil ${target}, il aimerait faire ta connaissance et il te remercie d'avoir accepté sa demande 😊`,
@@ -171,7 +197,7 @@ module.exports = {
                             const user = i.user.id === utilisateurDemande.id ? target : utilisateurDemande;
                             await i.reply({ content: `🎉 Tu as confirmé le match avec ${user} ! 🎉 \n\n Je suis heureux que vos profils aient matché, n'hésite pas à lui rappeler de confirmer le match si cela est réciproque !` });
                             try{
-                                await interaction.guild.members.cache.get(i.user.id).roles.add(roleMatch.role);
+                                await interaction.guild.members.cache.get(i.user.id).roles.add(roleMatch);
                             } catch (error){
                                 console.error('Erreur d\'ajout du rôle :', error);
                                 await interaction.reply({ content: `Erreur lors de l'ajout du rôle <@${roleMatch}>, veuillez réessayer.`})
