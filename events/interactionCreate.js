@@ -104,16 +104,19 @@ module.exports = {
                         } else if(value === 'match'){
                             embed.addFields({
                                 name: '🫂 Match',
-                                value: `Dès que tu trouves qu'un profil te correspond et que tu aimerais faire connaissance avec la personne mais que tu as peur` +
-                                    `de lui envoyer un message, grâce à la commande **/match** tu peux lui envoyer une demande pour lui dire que tu aimerais la connaître.\n` +
+                                value: `Dès que tu trouves qu'un profil te correspond et que tu aimerais faire connaissance avec la personne,` +
+                                    ` grâce à la commande **/match** tu peux lui envoyer une demande pour lui dire que tu aimerais la connaître.\n` +
                                     `⚠️ Vous seuls peuvent voir les messages du salon, **__le propriétaire garanti ne pas regarder__** les salons de Match (voir ${`<#${'1356023003095502921'}>`}) \n\n` +
-                                    `Cette personne recevra en MP ta demande de contact et pourra l'accepter. Si elle l'accepte, c'est déjà un bon signe, c'est que tu` +
-                                    `l'intéresse également ! Ensuite, un salon sera spécialement créé pour que vous puissiez discuter ensemble et apprendre à vous connaître !\n\n` +
-                                    `Enfin, tu recevras un message de ma part dans le salon, qui sera épinglé pour le retrouver facilement, et tu pourras appuyer sur le bouton` +
+                                    `Cette personne recevra en MP ta demande de contact. Si elle l'accepte, c'est déjà un bon signe, c'est que tu` +
+                                    `l'intéresse également ! Ensuite, un salon sera spécialement créé pour que vous puissiez discuter ensemble et apprendre à vous connaître !\n\n`
+                            });
+                            embed.addFields({
+                                name: 'Après qu\'elle est acceptée :',
+                                value: `Enfin, tu recevras un message de ma part dans le salon, qui sera épinglé pour le retrouver facilement, et tu pourras appuyer sur le bouton` +
                                     ` **Match** si tu es satisfait(e) de ta conversation avec. Si ce n'est pas le cas, tu peux appuyer sur le bouton` +
                                     ` **Échec**, cela fermera ton Match avec la personne. Enfin, si tu rencontres un problème, tu peux envoyer un message au propriétaire du serveur` +
                                     `via le bouton **Signaler**.`
-                            });
+                            })
                         } else if(value === 'interet'){
                             embed.addFields({
                                 name: '↕️ Intérêt',
