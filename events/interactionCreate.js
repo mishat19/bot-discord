@@ -13,7 +13,6 @@ module.exports = {
                 const channel = client.channels.cache.get('1364328269079646218');
 
                 if (channel && channel.isTextBased()) {
-                    await channel.send(`User: <@${interaction.user.id}>\nMotif du problème : ${titre}\nExplications : ${probleme}`);
                     //Embed
                     const exampleEmbed = new EmbedBuilder()
                         .setColor(0xFF0000)
@@ -26,7 +25,7 @@ module.exports = {
                         .addFields(
                             { name: 'Signaleur :', value : `<@${interaction.user.id}>`},
                             { name: 'Motif du signalement :', value: titre },
-                            { name: '\u200B', value: '\u200B' },
+                            //{ name: '\u200B', value: '\u200B' },
                             { name: 'Détails :', value: probleme, inline: true },
                         )
                         //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
@@ -83,6 +82,31 @@ module.exports = {
                     await interaction.followUp({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
                 } else {
                     await interaction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+                }
+            }
+        } else if(interaction.isStringSelectMenu()){
+            if(interaction.customId === 'starter'){
+                for(const value in interaction.values){
+                    if(value === 'introduction'){
+                        interaction.reply({ content: `${interaction.client.user} est un bot de rencontre qui souhaite **créer des rencontres** entre personnes afin qu'elles puissent` +
+                            `apprendre à se connaître. Le but est de pouvoir **créer de nouvelles amitiés** en ligne voir des amitiés dans la **vraie vie** !`, flags: MessageFlags.Ephemeral });
+                    } else if(value === 'match'){
+                        interaction.reply({ content: `Dès que tu trouves qu'un profil peut te correspondre et que tu aimerais faire connaissance avec la personne mais que tu as peur` +
+                                `de lui envoyer un message, grâce à la commande **/match** tu peux lui envoyer une demande pour lui dire que tu aimerais apprendre à la connaître.\n` +
+                                `⚠️ La personne et toi seul peuvent voir les messages du salon, **__le propriétaire garanti ne pas regarder__** les salons de Match (voir ${`<#${'1356023003095502921'}>`}) \n\n` +
+                                `Cette personne recevra en MP ta demande de contact et pourra l'accepter (ou la refuser). Si la personne l'accepte, c'est déjà un bon signe, c'est que tu` +
+                            `l'intéresse également ! Ensuite, un salon sera spécialement créé pour que vous puissiez discuter ensemble et apprendre à vous connaître !\n\n` +
+                            `Enfin, tu recevras un message de ma part dans le salon, qui sera épinglé pour le retrouver facilement, et tu pourras appuyer sur le bouton` +
+                            `**Match** si tu aimes beaucoup cette personne et que tu es satisfait(e) de ta conversation avec. Si ce n'est pas le cas, tu peux appuyer sur le bouton` +
+                            `**Échec**, cela fermera ton Match avec la personne. Enfin, si tu rencontres un quelconque problème, tu peux envoyer un message au propriétaire du serveur` +
+                            `via le bouton **Signaler**.`, flags: MessageFlags.Ephemeral });
+
+                    } else if(value === 'interet'){
+                        interaction.reply({ content: 'Le système de réaction des points d\'intérêt est très simple à comprendre, il fonctionne en 2 points : \n\n' +
+                            '💌 +1pt pour montrer au destinataire que son message t\a plu et qu\'il est sur la bonne voie pour gagner ton intérêt\n' +
+                            '💔 -1pt pour montrer au destinataire que son message t\'a déçu, blessé et qu\'il n\'a pas \n' +
+                            '', flags: MessageFlags.Ephemeral });
+                    }
                 }
             }
         }
