@@ -86,27 +86,52 @@ module.exports = {
             }
         } else if(interaction.isStringSelectMenu()){
             if(interaction.customId === 'starter'){
-                for(const value in interaction.values){
-                    if(value === 'introduction'){
-                        interaction.reply({ content: `${interaction.client.user} est un bot de rencontre qui souhaite **créer des rencontres** entre personnes afin qu'elles puissent` +
-                            `apprendre à se connaître. Le but est de pouvoir **créer de nouvelles amitiés** en ligne voir des amitiés dans la **vraie vie** !`, flags: MessageFlags.Ephemeral });
-                    } else if(value === 'match'){
-                        interaction.reply({ content: `Dès que tu trouves qu'un profil peut te correspondre et que tu aimerais faire connaissance avec la personne mais que tu as peur` +
-                                `de lui envoyer un message, grâce à la commande **/match** tu peux lui envoyer une demande pour lui dire que tu aimerais apprendre à la connaître.\n` +
-                                `⚠️ La personne et toi seul peuvent voir les messages du salon, **__le propriétaire garanti ne pas regarder__** les salons de Match (voir ${`<#${'1356023003095502921'}>`}) \n\n` +
-                                `Cette personne recevra en MP ta demande de contact et pourra l'accepter (ou la refuser). Si la personne l'accepte, c'est déjà un bon signe, c'est que tu` +
-                            `l'intéresse également ! Ensuite, un salon sera spécialement créé pour que vous puissiez discuter ensemble et apprendre à vous connaître !\n\n` +
-                            `Enfin, tu recevras un message de ma part dans le salon, qui sera épinglé pour le retrouver facilement, et tu pourras appuyer sur le bouton` +
-                            `**Match** si tu aimes beaucoup cette personne et que tu es satisfait(e) de ta conversation avec. Si ce n'est pas le cas, tu peux appuyer sur le bouton` +
-                            `**Échec**, cela fermera ton Match avec la personne. Enfin, si tu rencontres un quelconque problème, tu peux envoyer un message au propriétaire du serveur` +
-                            `via le bouton **Signaler**.`, flags: MessageFlags.Ephemeral });
+                try{
+                    const embed = new EmbedBuilder()
+                        .setColor(0xFF0000)
+                        .setTitle("ℹ️ Informations sur le bot de rencontre")
+                        .setAuthor({ name: interaction.client.user.username, iconURL: interaction.client.user.displayAvatarURL() })
+                        .setFooter({ text: `Demandé par ${interaction.user.username}`, iconURL: interaction.user.displayAvatarURL() })
+                        .setTimestamp();
 
-                    } else if(value === 'interet'){
-                        interaction.reply({ content: 'Le système de réaction des points d\'intérêt est très simple à comprendre, il fonctionne en 2 points : \n\n' +
-                            '💌 +1pt pour montrer au destinataire que son message t\a plu et qu\'il est sur la bonne voie pour gagner ton intérêt\n' +
-                            '💔 -1pt pour montrer au destinataire que son message t\'a déçu, blessé et qu\'il n\'a pas \n' +
-                            '', flags: MessageFlags.Ephemeral });
+                    for(const value of interaction.values){
+                        if(value === 'introduction'){
+                            embed.addFields({
+                                name: '🧭 Match',
+                                value: `${interaction.client.user} est un bot de rencontre qui souhaite **créer des rencontres** entre personnes afin qu'elles puissent` +
+                                    `apprendre à se connaître. Le but est de pouvoir **créer de nouvelles amitiés** en ligne voir des amitiés dans la **vraie vie** !`
+                            });
+                        } else if(value === 'match'){
+                            embed.addFields({
+                                name: '🫂 Match',
+                                value: `Dès que tu trouves qu'un profil te correspond et que tu aimerais faire connaissance avec la personne mais que tu as peur` +
+                                    `de lui envoyer un message, grâce à la commande **/match** tu peux lui envoyer une demande pour lui dire que tu aimerais la connaître.\n` +
+                                    `⚠️ Vous seuls peuvent voir les messages du salon, **__le propriétaire garanti ne pas regarder__** les salons de Match (voir ${`<#${'1356023003095502921'}>`}) \n\n` +
+                                    `Cette personne recevra en MP ta demande de contact et pourra l'accepter. Si elle l'accepte, c'est déjà un bon signe, c'est que tu` +
+                                    `l'intéresse également ! Ensuite, un salon sera spécialement créé pour que vous puissiez discuter ensemble et apprendre à vous connaître !\n\n` +
+                                    `Enfin, tu recevras un message de ma part dans le salon, qui sera épinglé pour le retrouver facilement, et tu pourras appuyer sur le bouton` +
+                                    ` **Match** si tu es satisfait(e) de ta conversation avec. Si ce n'est pas le cas, tu peux appuyer sur le bouton` +
+                                    ` **Échec**, cela fermera ton Match avec la personne. Enfin, si tu rencontres un problème, tu peux envoyer un message au propriétaire du serveur` +
+                                    `via le bouton **Signaler**.`
+                            });
+                        } else if(value === 'interet'){
+                            embed.addFields({
+                                name: '↕️ Intérêt',
+                                value: 'Le système de réaction des points d\'intérêt est très simple à comprendre, il fonctionne en 2 points : \n\n' +
+                                    '💌 +1pt pour montrer au destinataire que son message t\a plu et qu\'il est sur la bonne voie pour gagner ton intérêt\n' +
+                                    '💔 -1pt pour montrer au destinataire que son message t\'a déçu ou blessé et qu\'il perd des points dans ton estime\n' +
+                                    '↕️ Tu peux consulter les points d\'intérêt que tu as avec une personne via la commande **/interet**'
+                            });
+                        }
                     }
+
+                    await interaction.reply({
+                        embeds: [embed],
+                        ephemeral: true,
+                    });
+                } catch(error){
+                    if(!interaction.replied) await interaction.reply({ content: 'Une erreur est survenue avec le menu.', ephemeral: true });
+                    console.error(error);
                 }
             }
         }
