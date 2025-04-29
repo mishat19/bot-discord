@@ -4,34 +4,42 @@ module.exports = {
     category: 'utility',
     data: new SlashCommandBuilder()
         .setName('menu')
-        .setDescription('Select a Pokemon.'),
+        .setDescription('Fonctionnement du bot'),
     async execute(interaction) {
         const select = new StringSelectMenuBuilder()
             .setCustomId('starter')
-            .setPlaceholder('Make a selection!')
+            .setPlaceholder('Choisir une option')
             .addOptions(
                 new StringSelectMenuOptionBuilder()
-                    .setLabel('Bulbasaur')
-                    .setDescription('The dual-type Grass/Poison Seed Pokémon.')
-                    .setValue('bulbasaur'),
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('Charmander')
-                    .setDescription('The Fire-type Lizard Pokémon.')
-                    .setValue('charmander'),
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('Option')
-                    .setValue('optionVal')
-                    .setDescription('A selectable option')
-                    .setEmoji('😊')
+                    .setLabel('Choisir une option')
+                    .setDescription('Menu intéractif')
+                    .setValue('option')
+                    .setEmoji('⚙️')
                     .setDefault(true),
+                new StringSelectMenuOptionBuilder()
+                    .setLabel('Introduction')
+                    .setDescription('Fonctionnement général du bot')
+                    .setValue('introduction')
+                    .setEmoji('🧭'),
+                new StringSelectMenuOptionBuilder()
+                    .setLabel('Match')
+                    .setDescription('Système de Match')
+                    .setValue('match')
+                    .setEmoji('🫂'),
+                new StringSelectMenuOptionBuilder()
+                    .setLabel('Intérêt')
+                    .setValue('interet')
+                    .setDescription('Système de points d\'intérêt')
+                    .setEmoji('💌')
             );
 
         const row = new ActionRowBuilder()
             .addComponents(select);
 
         await interaction.reply({
-            content: 'Choose your starter!',
+            content: 'Si tu souhaites savoir comment je fonctionne :',
             components: [row],
+            ephemeral: true
         });
     },
 };
