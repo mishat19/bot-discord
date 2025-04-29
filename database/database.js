@@ -62,7 +62,7 @@ async function initializeDatabase() {
 }
 
 //Ajouter/MAJ points POSITIFS d'intérêts
-async function addInterestPoints(envoyeur, receveur, points) {
+async function PositifsInteretPoints(envoyeur, receveur, points) {
     const [interest, created] = await Interest.findOrCreate({
         where: { envoyeur, receveur },
         defaults: { ptsPositifs: points }
@@ -75,7 +75,7 @@ async function addInterestPoints(envoyeur, receveur, points) {
 }
 
 //Supprimer/MAJ points NEGATIFS d'intérêts
-async function removeInterestPoints(envoyeur, receveur, points) {
+async function NegatifsInteretPoints(envoyeur, receveur, points) {
     const [interest, created] = await Interest.findOrCreate({
         where: { envoyeur, receveur },
         defaults: { ptsNegatifs: points }
@@ -105,8 +105,8 @@ async function getDetailInterestPoints(envoyeur, receveur) {
 
 module.exports = {
     initializeDatabase,
-    addInterestPoints,
-    removeInterestPoints,
+    PositifsInteretPoints,
+    NegatifsInteretPoints,
     getInterestPoints,
     getDetailInterestPoints,
 };
